@@ -1,5 +1,6 @@
 
 pub fn solve_a(input: &Vec<String>, debug: bool) -> i32 {
+    // Scan each 
     return 0i32;
 }
 

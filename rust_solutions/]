@@ -1,0 +1,60 @@
+use std::collections::{HashSet,HashMap};
+
+pub fn solve_a(input: &Vec<String>, debug: bool) -> i32 {
+    // Numbers that need to come before a given number
+    let mut hash: HashMap<i32, Vec<i32>> = HashMap::new();
+    let mut p2_idx: usize = 0;
+    for (idx, line) in input.iter().enumerate() {
+        if line.is_empty() { p2_idx = idx; break; }
+        let parts = line.split('|').map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();
+        if let Some(pre) = hash.get_mut(&parts[1]) {
+            pre.push(parts[0]);
+        } else {
+            hash.insert(parts[1], vec![parts[0]]);
+        }
+    }
+
+    let mut total: i32 = 0;
+
+    'outer: for idx in p2_idx+1..input.len() {
+        let sequence: Vec<i32> = input[idx].split(',').map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();
+        let mut disqualified_numbers: HashSet<i32> = HashSet::new();
+        for item in &sequence {
+            if disqualified_numbers.contains(item) {
+                continue 'outer;
+            }
+            if let Some(pre) = hash.get(item) {
+                for num in pre {
+                    disqualified_numbers.insert(*num);
+                }
+            }
+        }
+        total += sequence[(sequence.len() as f32 / 2f32).floor() as usize];
+    }
+
+    total
+}
+
+pub fn solve_b(input: &Vec<String>, debug: bool) -> i32 {
+    // Numbers that need to come before a given number
+    let mut hash: HashMap<i32, Vec<i32>> = HashMap::new();
+    let mut p2_idx: usize = 0;
+    for (idx, line) in input.iter().enumerate() {
+        if line.is_empty() { p2_idx = idx; break; }
+        let parts = line.split('|').map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();
+        if let Some(pre) = hash.get_mut(&parts[1]) {
+            pre.push(parts[0]);
+        } else {
+            hash.insert(parts[1], vec![parts[0]]);
+        }
+    }
+
+    let mut total: i32 = 0;
+
+    for idx in p2_idx+1..input.len() {
+        let sequence: Vec<i32> = input[idx].split(',').map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();
+    }
+
+    0i32
+}
+        
