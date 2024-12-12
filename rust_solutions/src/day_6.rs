@@ -117,27 +117,15 @@ fn is_loop(grid: &mut Vec<Vec<bool>>, start: &Guard, modify: &Position) -> bool 
     let mut unique_positions: HashSet<Guard> = HashSet::new();
     let max_x: i32 = grid[0].len() as i32 - 1;
     let max_y: i32 = grid.len() as i32 - 1;
-
-    println!("Trying without [{}, {}]", modify.x, modify.y);
-
-    let mut print_grid: Vec<Vec<char>> = vec![];
-
-    for row in grid.iter() {
-        print_grid.push(row.iter().map(|x| if *x { '#' } else { '.' }).collect::<Vec<char>>());
-    }
-
-    print_grid[modify.y as usize][modify.x as usize] = 'O';
-
-    for line in print_grid {
-        println!("{}", line.iter().collect::<String>());
-    }
-
     grid[modify.y as usize][modify.x as usize] = true;
 
     let mut guard = start.clone();
 
     while guard.position.x >= 0 && guard.position.x <= max_x && guard.position.y >= 0 && guard.position.y <= max_y {
-        if unique_positions.contains(&guard) { return true; }
+        if unique_positions.contains(&guard) {
+            grid[modify.y as usize][modify.x as usize] = false;
+            return true;
+        }
         unique_positions.insert(guard);
         let next_pos = guard.get_next();
         if !(next_pos.x < 0 || next_pos.x > max_x || next_pos.y < 0 || next_pos.y > max_y) {
@@ -209,11 +197,13 @@ pub fn solve_b(input: &Vec<String>, debug: bool) -> i32 {
         }
     }
 
+    let mut count: i32 = 0;
+
     for unique_position in unique_positions {
         if is_loop(&mut grid, &start, &unique_position) {
-           println!("Found location to create loop!");
+            count += 1;
         }
     }
-    0i32
+    count
 }
         
