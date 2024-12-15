@@ -151,17 +151,14 @@ fn char_to_dir(c: char) -> Direction {
     }
 }
 
-fn print_grid(grid: &Vec<Vec<char>>, x: usize, y: usize, last_direction: &Direction) {
-    println!("{}", match last_direction {
-        Direction::Up => '^',
-        Direction::Left => '<',
-        Direction::Right => '>',
-        Direction::Down => 'v'
-    });
+fn print_grid(grid: &Vec<Vec<char>>, x: usize, y: usize, _last_direction: &Direction) {
     let mut print_grid = grid.clone();
-    print_grid[y][x] = '@';
-    for line in print_grid {
-        println!("{}", line.iter().collect::<String>());
+    print_grid[y][x] = '^';
+    for line in print_grid.iter().enumerate() {
+        print!("{}", line.1.iter().collect::<String>());
+        if line.0 != print_grid.len() - 1 {
+            print!("\n");
+        }
     }
 }
 
@@ -189,7 +186,10 @@ pub fn solve_a(input: &Vec<String>, debug: bool) -> i32 {
         instructions.append(&mut line.chars().map(|x| char_to_dir(x)).collect());
     }
 
+    let mut count: f32 = 0f32;
+
     for instruction in &instructions {
+        count += 1f32;
         if push(&mut grid, x, y, instruction) {
             match instruction {
                 Direction::Up => y -= 1,
@@ -201,7 +201,8 @@ pub fn solve_a(input: &Vec<String>, debug: bool) -> i32 {
 
         if debug {
             print_grid(&grid, x, y, instruction);
-            println!("\x1B[{}A", grid.len() + 3);
+            print!("          <======== PART 1 ========> {}%", ((count / instructions.len() as f32) * 100f32).round());
+            println!("\x1B[{}A", grid.len() + 2);
         }
     }
 
@@ -262,7 +263,10 @@ pub fn solve_b(input: &Vec<String>, debug: bool) -> i32 {
         instructions.append(&mut line.chars().map(|x| char_to_dir(x)).collect());
     }
 
+    let mut count: f32 = 0f32;
+
     for instruction in &instructions {
+        count += 1f32;
         if push_large(&mut grid, x, y, instruction) {
             match instruction {
                 Direction::Up => y -= 1,
@@ -274,7 +278,8 @@ pub fn solve_b(input: &Vec<String>, debug: bool) -> i32 {
 
         if debug {
             print_grid(&grid, x, y, instruction);
-            println!("\x1B[{}A", grid.len() + 3);
+            print!("          <======== PART 2 ========> {}%", ((count / instructions.len() as f32) * 100f32).round());
+            println!("\x1B[{}A", grid.len() + 2);
         }
     }
 
@@ -292,4 +297,3 @@ pub fn solve_b(input: &Vec<String>, debug: bool) -> i32 {
     
     gps
 }
-        

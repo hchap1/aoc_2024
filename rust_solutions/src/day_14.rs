@@ -37,10 +37,6 @@ pub fn solve_a(input: &Vec<String>, debug: bool) -> i32 {
             xv: cleaned_line[2],
             yv: cleaned_line[3],
         });
-
-        if debug {
-            robots.last().unwrap().debug_print();
-        }
     }
 
     for _ in 0..100{
@@ -66,28 +62,6 @@ pub fn solve_a(input: &Vec<String>, debug: bool) -> i32 {
         if robot.x < mid_x && robot.y > mid_y { c += 1; continue; }
         if robot.x > mid_x && robot.y > mid_y { d += 1; continue; }
     }
-    
-    if debug {
-        let mut print_grid: Vec<Vec<usize>> = vec![vec![0; WIDTH as usize]; HEIGHT as usize];
-        for robot in robots {
-            print_grid[robot.y as usize][robot.x as usize] += 1;
-        }
-
-        for line in print_grid.iter().enumerate() {
-            for c in line.1.iter().enumerate() {
-                if c.0 as i32 == mid_x {
-                    print!(" ");
-                    continue;
-                }
-                if line.0 as i32 == mid_y {
-                    continue;
-                }
-                print!("{}", if *c.1 == 0 { String::from('.') } else { c.1.to_string() });
-            }
-            println!();
-        }
-    }
-
     a * b * c * d
 }
 
@@ -154,23 +128,34 @@ pub fn solve_b(input: &Vec<String>, debug: bool) -> i32 {
             continue;
         }
 
-        let mut print_grid: Vec<Vec<usize>> = vec![vec![0; WIDTH as usize]; HEIGHT as usize];
-        for robot in &robots {
-            print_grid[robot.y as usize][robot.x as usize] += 1;
-        }
+        let mut robots_per_line: Vec<usize> = vec![0; HEIGHT as usize];
 
-        for line in print_grid.iter().enumerate() {
-            for c in line.1.iter().enumerate() {
-                print!("{}", if *c.1 == 0 { String::from('.') } else { c.1.to_string() });
+        if debug {
+            let mut print_grid: Vec<Vec<usize>> = vec![vec![0; WIDTH as usize]; HEIGHT as usize];
+
+            for robot in &robots {
+                print_grid[robot.y as usize][robot.x as usize] += 1;
+                robots_per_line[robot.y as usize] += 1;
             }
-            println!();
+
+            for line in print_grid.iter().enumerate() {
+                if robots_per_line[line.0] < 3 {
+                    continue;
+                }
+                for c in line.1.iter().enumerate() {
+                    print!("{}", if *c.1 == 0 { String::from('.') } else { c.1.to_string() });
+                }
+                if line.0 != print_grid.len() - 1 { print!("\n"); }
+            }
+            println!("\x1B[{}A", print_grid.len());
+            sleep(Duration::from_millis(50));
         }
-        println!("{}", i+1);
-        io::stdout().flush().unwrap();
     }
 
     let mid_x = (WIDTH - 1) / 2;
     let mid_y = (HEIGHT - 1) / 2;
+
+    println!("\x1B[{}B", HEIGHT + 1);
 
     let mut a: i32 = 0;
     let mut b: i32 = 0;
@@ -185,27 +170,6 @@ pub fn solve_b(input: &Vec<String>, debug: bool) -> i32 {
         if robot.x > mid_x && robot.y < mid_y { b += 1; continue; }
         if robot.x < mid_x && robot.y > mid_y { c += 1; continue; }
         if robot.x > mid_x && robot.y > mid_y { d += 1; continue; }
-    }
-    
-    if debug {
-        let mut print_grid: Vec<Vec<usize>> = vec![vec![0; WIDTH as usize]; HEIGHT as usize];
-        for robot in robots {
-            print_grid[robot.y as usize][robot.x as usize] += 1;
-        }
-
-        for line in print_grid.iter().enumerate() {
-            for c in line.1.iter().enumerate() {
-                if c.0 as i32 == mid_x {
-                    print!(" ");
-                    continue;
-                }
-                if line.0 as i32 == mid_y {
-                    continue;
-                }
-                print!("{}", if *c.1 == 0 { String::from('.') } else { c.1.to_string() });
-            }
-            println!();
-        }
     }
 
     a * b * c * d
